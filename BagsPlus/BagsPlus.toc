@@ -2,7 +2,7 @@
 ## Title: Bags Plus
 ## Notes: One-window bags, bank and guild bank with categories, search, sorting and every character's items.
 ## Author: Saranwrap
-## Version: 1.0.12
+## Version: 1.0.16
 ## SavedVariables: BagsPlusDB, BagsPlusChars, BagsPlusGuilds
 
 Core.lua

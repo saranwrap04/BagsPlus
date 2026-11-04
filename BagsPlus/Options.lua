@@ -75,7 +75,7 @@ local function PageGeneral(p)
     F:Section("Bags")
     F:Check(W.Check(p, "Show keyring button in the bag strip", Get("showKeyring"), Set("showKeyring")))
     F:Check(W.Check(p, "Show watched currencies in the footer", Get("showCurrency"), Set("showCurrency")))
-    F:Check(W.Check(p, "Clear new-item marks when the bags close", Get("clearNewOnClose"), Set("clearNewOnClose")))
+    F:Check(W.Check(p, "Clear new-item marks when bags close (not when sorting by hand)", Get("clearNewOnClose"), Set("clearNewOnClose")))
     F:Check(W.Check(p, "Sell junk automatically at vendors", Get("autoSellJunk"), Set("autoSellJunk")))
 end
 

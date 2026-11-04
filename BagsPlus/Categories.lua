@@ -36,7 +36,7 @@ local function Equippable(r)
 end
 
 local tests = {
-    new = function(r) return r.isNew and not BP.db.manualSort end,
+    new = function(r) return r.isNew end,
     set = function(r) return BP.db.markSets and r.set end,
     quest = function(r) return r.quest or BP.TypeKey(r) == "Quest" end,
     food = function(r) return BP.TypeKey(r) == "Consumable" and r.sub == "Food & Drink" end,

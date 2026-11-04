@@ -144,7 +144,7 @@ BP.On("BAG_UPDATE", function(_, bag)
     if not BP.db or not D.me then return end
     if bag and (bag >= 0 and bag <= 4 or bag == BP.KEYRING) then D.ScanBag(bag) end
     if bag and bag >= 5 and BP.bankOpen then D.ScanBank() end
-    BP.TrackNew()
+    BP.TrackNewSoon()
     BP.InvalidateScan()
     BP.Dirty()
 end)
@@ -163,9 +163,11 @@ BP.On("CURRENCY_DISPLAY_UPDATE", function() BP.Dirty() end)
 BP.On("UNIT_INVENTORY_CHANGED", function(_, unit)
     if unit == "player" and D.me then
         for bag = 1, 4 do D.ScanBag(bag) end
+        BP.TrackNewSoon()
         BP.Dirty()
     end
 end)
+BP.On("PLAYER_EQUIPMENT_CHANGED", function() BP.TrackNewSoon() end)
 BP.On("PLAYER_MONEY", function() D.UpdateMoney(); BP.Dirty() end)
 BP.On("EQUIPMENT_SETS_CHANGED", function() BP.UpdateSets(); BP.Dirty() end)
 BP.On("PLAYER_LEVEL_UP", function()
@@ -179,6 +181,7 @@ BP.On("PLAYER_ENTERING_WORLD", function()
         BP.newTimer = true
         -- bag contents arrive in bursts right after login; only changes after that count as new
         BP.After(8, function()
+            BP.pruneOK = true
             BP.TrackNew()
             BP.newReady = true
         end)

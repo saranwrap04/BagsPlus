@@ -1,4 +1,4 @@
-Bags Plus 1.0.12
+Bags Plus 1.0.16
 by Saranwrap
 For World of Warcraft 3.3.5a (Interface 30300)
 
@@ -29,8 +29,11 @@ Features
     - Bank bag slots can be bought from the bank window.
   Sorting
     - By default nothing is re-sorted on its own: items stay in the order they
-      have in your bags (and new items stay in their normal category, with the
-      new-item glow) until you click Sort. Turn off "Sort only when I click
+      have in your bags. Items you pick up go into the "New items" section
+      (only the stack that grew or was created, not your other stacks of the same item)
+      (with the new-item glow) and stay there until you click Sort, also after
+      a relog or /reload. Changing gear (spec swap, equipment sets) never marks
+      items as new. Turn off "Sort only when I click
       Sort" in Settings > Layout to have categories sort themselves.
     - Sort button: combines partial stacks, fills special bags and sorts in
       place by type, quality, name or item level. Works for the bank too.
@@ -43,7 +46,8 @@ Features
     - Stack counts use the same outlined font and size as the item level.
     - Quality borders, item level (white with a dark outline, size adjustable), bind type (BoE, BoP, BoU, BoA), a coin icon on every junk (grey) item,
       equipment set and quest markers in three corners.
-    - Unusable items tinted red, new items pulse until you hover them. Items
+    - Unusable items tinted red, new items pulse until you click Sort (or, with
+      "Sort only when I click Sort" off, until you hover them). Items
       already in your bags when you log in are never marked new.
     - Windows open above the chat; the layer is a setting.
   Search

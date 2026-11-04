@@ -1,7 +1,7 @@
 local ADDON, BP = ...
 _G.BagsPlus = BP
 
-BP.VERSION = "1.0.12"
+BP.VERSION = "1.0.16"
 BP.TITLE = "Bags Plus"
 BP.GOLD = { 1, 0.82, 0 }
 BP.windows = {}
@@ -230,6 +230,10 @@ BP.On("ADDON_LOADED", function(_, name)
     end
     BP.db = BagsPlusDB
     BP.Data.Init()
+    -- new-item marks are saved per character so they survive a relog until Sort is clicked
+    BagsPlusDB.newMarks = BagsPlusDB.newMarks or {}
+    BagsPlusDB.newMarks[BP.myKey] = BagsPlusDB.newMarks[BP.myKey] or {}
+    BP.new = BagsPlusDB.newMarks[BP.myKey]
 end)
 
 BP.On("PLAYER_LOGIN", function()

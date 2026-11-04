@@ -143,9 +143,24 @@ function BP.UpdateSets()
     end
 end
 
--- Compare total counts per item ID against the last scan; gains outside the bank are "new".
-function BP.TrackNew()
-    local totals = {}
+-- New items are marked per stack (bag:slot -> item id). When your total of an item goes up,
+-- only the stack that grew, or the stack that was just created, is marked.
+local prevSnap = {}
+
+function BP.TrackNew(skipMarking)
+    local totals, snap = {}, {}
+    -- worn gear and equipped bags count too, so swapping gear (spec change, equipment sets)
+    -- moves items between worn and carried without looking like a gain
+    for inv = 0, 23 do
+        local l = GetInventoryItemLink("player", inv)
+        if l then
+            local id = tonumber(l:match("item:(%d+)"))
+            if id then
+                local c = GetInventoryItemCount and GetInventoryItemCount("player", inv) or 1
+                totals[id] = (totals[id] or 0) + ((c and c > 0) and c or 1)
+            end
+        end
+    end
     for bag = 0, 4 do
         local n = GetContainerNumSlots(bag)
         for slot = 1, (n or 0) do
@@ -153,16 +168,47 @@ function BP.TrackNew()
             if link then
                 local id = tonumber(link:match("item:(%d+)"))
                 local _, count = GetContainerItemInfo(bag, slot)
-                totals[id] = (totals[id] or 0) + (count or 1)
+                count = count or 1
+                totals[id] = (totals[id] or 0) + count
+                snap[bag .. ":" .. slot] = { id = id, count = count }
             end
         end
     end
-    if BP.newReady and not BP.bankOpen then
-        for id, n in pairs(totals) do
-            if n > (known[id] or 0) then BP.new[id] = true end
+    if BP.newReady and not BP.bankOpen and not skipMarking then
+        for key, s in pairs(snap) do
+            if totals[s.id] > (known[s.id] or 0) then
+                local p = prevSnap[key]
+                if not p or p.id ~= s.id or s.count > p.count then BP.new[key] = s.id end
+            end
         end
     end
-    known = totals
+    -- a mark ends when its stack is gone or the slot now holds something else
+    if BP.pruneOK then
+        for key, id in pairs(BP.new) do
+            if not snap[key] or snap[key].id ~= id then BP.new[key] = nil end
+        end
+    end
+    known, prevSnap = totals, snap
+end
+
+-- Judge changes only once the bags have been quiet for a moment: a gear swap moves items in
+-- several steps, and the first step alone would look like a gain.
+local due, pendingSkip
+function BP.TrackNewSoon()
+    pendingSkip = pendingSkip or BP.bankOpen
+    due = GetTime() + 0.6
+    if BP.newWaiting then return end
+    BP.newWaiting = true
+    local function check()
+        local left = due - GetTime()
+        if left > 0 then BP.After(left + 0.02, check); return end
+        BP.newWaiting = false
+        local skip = pendingSkip
+        pendingSkip = nil
+        BP.TrackNew(skip)
+        BP.Dirty()
+    end
+    BP.After(0.62, check)
 end
 
 function BP.ClearNew()
@@ -173,7 +219,7 @@ end
 function BP.Prepare(rec)
     BP.Fill(rec)
     if not rec.link then return rec end
-    rec.isNew = BP.new[rec.id] and true or false
+    rec.isNew = (rec.live and rec.bag and rec.slot and BP.new[rec.bag .. ":" .. rec.slot] == rec.id) and true or false
     rec.set = BP.setMap[rec.id]
     if rec.live then
         if GetContainerItemQuestInfo then
@@ -442,8 +488,8 @@ function BP.NewLiveButton(holder, bag, slot)
     StyleButton(b, true)
     b:HookScript("OnEnter", function(s)
         local rec = s.rec
-        if rec and rec.id and BP.new[rec.id] then
-            BP.new[rec.id] = nil
+        if rec and rec.id and rec.live and BP.new[rec.bag .. ":" .. rec.slot] and not BP.db.manualSort then
+            BP.new[rec.bag .. ":" .. rec.slot] = nil
             rec.isNew = false
             s.glow:Hide()
             pulsing[s] = nil

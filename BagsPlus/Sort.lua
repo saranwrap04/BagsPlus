@@ -189,6 +189,8 @@ function BP.Sort(kind)
     local bags = BagIDs(kind)
     if #bags == 0 then return end
     state = { bags = bags, ticks = 0, same = 0 }
+    BP.ClearNew()
+    BP.Dirty()
     frame:Show()
 end
 

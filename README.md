@@ -4,7 +4,7 @@
 
 One window for your bags, bank and guild bank on **World of Warcraft 3.3.5a** (ChromieCraft / AzerothCore), with categories, search, sorting and the saved items of every character.
 
-**Version 1.0.12** - by Saranwrap
+**Version 1.0.16** - by Saranwrap
 
 ## Features
 

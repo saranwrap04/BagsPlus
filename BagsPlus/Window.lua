@@ -732,7 +732,7 @@ function BP.CreateWindow(kind)
     f:SetScript("OnHide", function(s)
         W.CloseMenu()
         if kind == "bank" and BP.bankOpen then CloseBankFrame() end
-        if kind == "bags" and BP.db.clearNewOnClose then BP.ClearNew() end
+        if kind == "bags" and BP.db.clearNewOnClose and not BP.db.manualSort then BP.ClearNew() end
     end)
 
     f.measure = W.Text(f, 11, 1, 1, 1)
