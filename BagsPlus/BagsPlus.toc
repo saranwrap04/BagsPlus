@@ -1,0 +1,17 @@
+## Interface: 30300
+## Title: Bags Plus
+## Notes: One-window bags, bank and guild bank with categories, search, sorting and every character's items.
+## Author: Saranwrap
+## Version: 1.0.12
+## SavedVariables: BagsPlusDB, BagsPlusChars, BagsPlusGuilds
+
+Core.lua
+Widgets.lua
+Data.lua
+Items.lua
+Search.lua
+Categories.lua
+Sort.lua
+Window.lua
+Bags.lua
+Options.lua
